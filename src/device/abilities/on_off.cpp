@@ -1,18 +1,18 @@
 #include "device/abilities/on_off.h"
 
 void OnOff::turn_on() {
-	state = true;
+	set_state(true);
 }
 
 void OnOff::turn_off() {
-	state = false;
+	set_state(false);
 }
 
 bool OnOff::is_on() const {
-	return state;
+	return get_state();
 }
 
 void OnOff::toggle_on_off() {
-	state = !state;
+	set_state(!get_state());
 }
 

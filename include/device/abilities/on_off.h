@@ -2,10 +2,11 @@
 
 #include "device/ability.h"
 
-using Parent = Ability<AbilityType::ON_OFF>;
-
-class OnOff : public Parent {
-	using Parent::Ability;
+class OnOff : public Ability<AbilityType::ON_OFF, bool> {
+	public:
+	explicit OnOff(IDevice* device) : Ability(device, false) {
+		// On/Off defaults to off.
+	}
 
 	/**
 	 * @brief Turns the device on.

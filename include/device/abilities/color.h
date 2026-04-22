@@ -2,9 +2,17 @@
 
 #include "device/ability.h"
 
-class Color : public Ability {
+class Color : public Ability<AbilityType::COLOR, uint32_t> {
 	public:
-	Color(IDevice* device) : Ability(device) {
-		// Initialization code for Color
+	explicit Color(IDevice* device) : Ability(device, 0x00FFFFFF) {
+		// Default color is white in RGB packed format.
+	}
+
+	uint32_t get_color() const {
+		return get_state();
+	}
+
+	void set_color(uint32_t color) {
+		set_state(color);
 	}
 };

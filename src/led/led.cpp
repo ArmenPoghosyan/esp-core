@@ -23,6 +23,14 @@ void LED::toggle() {
 	}
 }
 
+void LED::set(bool state) {
+	if (state) {
+		on();
+	} else {
+		off();
+	}
+}
+
 bool LED::isOn() {
 	return state;
 }

@@ -1,32 +1,35 @@
 #include <Arduino.h>
 
-#include "device/abilities/brightness.h"
-#include "device/abilities/color.h"
-#include "device/types/light.h"
-#include "device/types/switch.h"
+#include "device/type/light.h"
+#include "device/ability/on_off.h"
+#include "device/ability/brightness.h"
+#include "led/led.h"
 
-#include "device/manager.h"
+Light<OnOff, Brightness> light("Light 1");
 
-Light<OnOff, Brightness, Color> light1("Living Room Light");
-BasicSwitch wall_switch("Wall Switch");
+LED led;
 
 void setup()
 {
-	light1.on_state_updated([](AbilityType ability, const StateValue& value)
-		{
-			switch (ability)
-			{
-				case AbilityType::ON_OFF:
-					Serial.print("Light ON/OFF state changed: ");
-					digitalWrite(LED_BUILTIN, std::get<bool>(value) ? HIGH : LOW);
-					break;
-			}
+	Serial.begin(115200);
+
+	light.on_state_updated([](AbilityType ability, StateValue state) {
+		switch(ability) {
+			case AbilityType::ON_OFF:
+				{
+					bool is_on = std::get<bool>(state);
+					Serial.print("ON_OFF state updated: ");
+					Serial.println(is_on);
+					led.set(is_on);
+				}
+				break;
 		}
-	);
+	});
 }
 
 void loop()
 {
-	light1.toggle_on_off();
-	delay(1000);
+	delay(500);
+
+	light.toggle_on_off();
 }

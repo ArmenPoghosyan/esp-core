@@ -1,7 +1,6 @@
 #pragma once
 
 #include "device/device.h"
-#include "device/abilities/on_off.h"
 
 /**
  * @brief A class representing a light device.
@@ -12,12 +11,3 @@ class Light : public GenericDevice<Abilities...> {
 	public:
 	Light(const char* name) : GenericDevice<Abilities...>(DeviceType::LIGHT, name) {}
 };
-
-/**
- * @brief A basic light device that supports on/off functionality.
- */
-class BasicLight : public Light<OnOff> {
-	public:
-	BasicLight(const char* name) : Light<OnOff>(name) {}
-};
-

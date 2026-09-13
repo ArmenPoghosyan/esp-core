@@ -17,4 +17,7 @@ enum class AbilityType : uint8_t {
 
 using StateValue = std::variant<std::monostate, bool, uint8_t, uint16_t, uint32_t, int32_t, float>;
 
-
+template <typename T>
+T convert_state(const StateValue& state) {
+	return std::get<T>(state);
+}

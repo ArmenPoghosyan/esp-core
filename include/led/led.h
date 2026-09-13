@@ -16,6 +16,7 @@ class LED {
 	void on();
 	void off();
 	void toggle();
+	void set(bool state);
 	bool isOn();
 	void blink(unsigned long interval = 500);
 	void stop_blink();

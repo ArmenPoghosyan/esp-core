@@ -5,6 +5,10 @@ LED::LED(int pin, int MODE) {
 	this->pin = pin;
 }
 
+LED::~LED() {
+	stop_blink();
+}
+
 void LED::on() {
 	digitalWrite(pin, HIGH);
 	state = true;

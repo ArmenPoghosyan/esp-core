@@ -18,6 +18,7 @@ class DeviceManager {
 	static DeviceManager& instance();
 
 	void register_device(IDevice* device);
+	void unregister_device(IDevice* device);
 	const std::vector<IDevice*>& get_devices() const;
 	const std::map<AbilityType, StateValue>* get_device_states(const IDevice* device) const;
 

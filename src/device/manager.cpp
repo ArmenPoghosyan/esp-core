@@ -29,6 +29,19 @@ void DeviceManager::register_device(IDevice* device) {
 	);
 }
 
+void DeviceManager::unregister_device(IDevice* device) {
+	if (!device) {
+		return;
+	}
+
+	auto it = std::find(devices.begin(), devices.end(), device);
+	if (it != devices.end()) {
+		devices.erase(it);
+	}
+
+	states.erase(device);
+}
+
 const std::vector<IDevice*>& DeviceManager::get_devices() const {
 	return devices;
 }

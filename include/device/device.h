@@ -23,7 +23,7 @@ class IDevice {
 
 	public:
 	IDevice(DeviceType type, const char* name);
-	virtual ~IDevice() = default;
+	virtual ~IDevice();
 
 	/**
 	 * @brief Get the type of the device

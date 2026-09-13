@@ -9,6 +9,10 @@ IDevice::IDevice(DeviceType type, const char* name) : type(type), name(name) {
 	DeviceManager::instance().register_device(this);
 }
 
+IDevice::~IDevice() {
+	DeviceManager::instance().unregister_device(this);
+}
+
 DeviceType IDevice::get_type() const {
 	return type;
 }

@@ -19,10 +19,11 @@ void setup()
 				{
 					bool is_on = std::get<bool>(state);
 					Serial.print("ON_OFF state updated: ");
-					Serial.println(is_on);
+					Serial.println(is_on ? "on" : "off");
 					led.set(is_on);
 				}
 				break;
+			default: break;
 		}
 	});
 }

@@ -7,11 +7,16 @@
 class LED {
 	private:
 	int pin;
-	TimerHandle_t timer;
+	TimerHandle_t timer = nullptr;
 	bool state = false;
 
 	public:
 	LED(int pin = LED_BUILTIN, int MODE = OUTPUT);
+	~LED();
+
+	// LED owns a FreeRTOS timer handle; copying would double-free it.
+	LED(const LED&) = delete;
+	LED& operator=(const LED&) = delete;
 
 	void on();
 	void off();

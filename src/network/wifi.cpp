@@ -3,6 +3,8 @@
 #include <WiFi.h>
 
 #include "env.h"
+#include "network/captive_portal.h"
+#include "network/network.h"
 
 namespace net {
 
@@ -87,13 +89,17 @@ void Wifi::start_captive() {
 	const uint16_t mac_suffix = static_cast<uint16_t>(ESP.getEfuseMac() & 0xFFFF);
 	snprintf(name, sizeof(name), "%s-%04X", WIFI_AP_PREFIX, mac_suffix);
 
-	// AP_STA so a captive-portal module can still scan for networks later.
+	// AP_STA so the captive portal can still scan for networks.
 	WiFi.mode(WIFI_AP_STA);
 	WiFi.softAP(name);
 	set_state(State::CAPTIVE);
+
+	network.captive_portal().on_finished([this]() { toggle_requested = true; });
+	network.captive_portal().begin();
 }
 
 void Wifi::stop_captive() {
+	network.captive_portal().stop();
 	WiFi.softAPdisconnect(true);
 	WiFi.mode(WIFI_STA);
 }

@@ -4,6 +4,8 @@
 
 namespace net {
 	class Wifi;
+	class Dns;
+	class CaptivePortal;
 }
 
 /**
@@ -19,12 +21,16 @@ class Network {
 	~Network();
 
 	net::Wifi& wifi();
+	net::Dns& dns();
+	net::CaptivePortal& captive_portal();
 
 	/** Drive every module that has been created. Call from loop(). */
 	void loop();
 
 	private:
 	std::unique_ptr<net::Wifi> wifi_;
+	std::unique_ptr<net::Dns> dns_;
+	std::unique_ptr<net::CaptivePortal> captive_portal_;
 };
 
 // The single, globally-available network instance.

@@ -1,5 +1,10 @@
 #pragma once
 
+#include "device/consts.h"
+
+// ? Memory Type
+#define MEMORY_TYPE					MEMORY_PREFERENCES
+
 // ? WiFi configuration
 #define WIFI_LED_PIN				LED_BUILTIN
 #define WIFI_BUTTON_PIN				0

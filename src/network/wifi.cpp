@@ -8,11 +8,28 @@
 
 namespace net {
 
+namespace {
+	// "<prefix>-<MAC suffix>", e.g. "APSuite-926C" or "Light-926C".
+	String device_id(const char* prefix) {
+		char buf[32];
+		snprintf(buf, sizeof(buf), "%s-%04X", prefix, static_cast<uint16_t>(ESP.getEfuseMac() & 0xFFFF));
+		return String(buf);
+	}
+}
+
 Wifi::Wifi() : led(WIFI_LED_PIN), button(WIFI_BUTTON_PIN) {}
 
 void Wifi::begin() {
 	WiFi.persistent(false);
 	WiFi.setAutoReconnect(false);   // we manage retries ourselves
+
+	// Set the hostname when the STA starts — the reliable point on esp32 2.0.x
+	// (setting it between mode() and begin() often no-ops).
+	WiFi.onEvent([](WiFiEvent_t event) {
+		if (event == ARDUINO_EVENT_WIFI_STA_START) {
+			WiFi.setHostname(device_id(WIFI_AP_PREFIX).c_str());
+		}
+	});
 
 	button.onLongPress(WIFI_BUTTON_HOLD_MS, [this]() { toggle_requested = true; });
 
@@ -67,7 +84,7 @@ void Wifi::connect() {
 		return;
 	}
 
-	WiFi.mode(WIFI_STA);
+	WiFi.mode(WIFI_STA);  // set to station mode before connecting
 	try_current_credential();
 }
 
@@ -84,14 +101,9 @@ void Wifi::disconnect() {
 }
 
 void Wifi::start_captive() {
-	// Name the AP "<manufacturer>-<MAC suffix>" so every device is unique.
-	char name[32];
-	const uint16_t mac_suffix = static_cast<uint16_t>(ESP.getEfuseMac() & 0xFFFF);
-	snprintf(name, sizeof(name), "%s-%04X", WIFI_AP_PREFIX, mac_suffix);
-
 	// AP_STA so the captive portal can still scan for networks.
 	WiFi.mode(WIFI_AP_STA);
-	WiFi.softAP(name);
+	WiFi.softAP(device_id(WIFI_AP_PREFIX).c_str());   // "<manufacturer>-<MAC suffix>"
 	set_state(State::CAPTIVE);
 
 	network.captive_portal().on_finished([this]() { toggle_requested = true; });

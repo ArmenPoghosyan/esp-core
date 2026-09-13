@@ -13,7 +13,7 @@
 #define WIFI_BLINK_CAPTIVE_MS		125				// blink: captive mode
 #define WIFI_CONNECT_TIMEOUT_MS		15000			// per-credential connect attempt
 #define WIFI_RETRY_MS				10000			// wait before retrying after all fail
-#define WIFI_AP_PREFIX				DEVICE_MANUFACTURER	// SoftAP name prefix (a MAC suffix is appended)
+#define WIFI_AP_PREFIX				DEVICE_MANUFACTURER	// AP + LAN hostname prefix (a MAC suffix is appended)
 
 // ? Device information
 #define DEVICE_NAME					"Light"

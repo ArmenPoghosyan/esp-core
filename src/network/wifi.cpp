@@ -23,7 +23,7 @@ Wifi::Wifi() : led(WIFI_LED_PIN), button(WIFI_BUTTON_PIN) {}
 
 void Wifi::begin() {
 	WiFi.persistent(false);
-	WiFi.setAutoReconnect(false);   // we manage retries ourselves
+	WiFi.setSleep(false);           // keep the radio responsive: faster reconnect, fewer drops
 
 	button.onLongPress(WIFI_BUTTON_HOLD_MS, [this]() { toggle_requested = true; });
 
@@ -40,8 +40,10 @@ void Wifi::loop() {
 		case State::CONNECTING:
 			if (WiFi.status() == WL_CONNECTED) {
 				set_state(State::CONNECTED);
+				WiFi.setAutoReconnect(true);   // recover brief drops fast, no full retry cycle
 				sync_time();   // start NTP so TLS cert dates validate
 			} else if (millis() - timer_ms >= WIFI_CONNECT_TIMEOUT_MS) {
+				WiFi.setAutoReconnect(false);   // gave up on this AP -> manual failover
 				index++;
 				if (index < networks.size()) {
 					try_current_credential();   // next backup network
@@ -54,7 +56,10 @@ void Wifi::loop() {
 
 		case State::CONNECTED:
 			if (WiFi.status() != WL_CONNECTED) {
-				connect();                      // dropped -> reconnect from the top
+				// Brief drop: autoReconnect restores the same AP quickly. If it
+				// can't recover, CONNECTING's timeout runs the full retry.
+				set_state(State::CONNECTING);
+				timer_ms = millis();
 			}
 			break;
 
@@ -70,6 +75,7 @@ void Wifi::loop() {
 }
 
 void Wifi::connect() {
+	WiFi.setAutoReconnect(false);   // we choose the network during manual cycling
 	networks = credentials.get_credentials();
 	index = 0;
 
@@ -97,6 +103,7 @@ void Wifi::disconnect() {
 }
 
 void Wifi::start_captive() {
+	WiFi.setAutoReconnect(false);   // don't let the STA fight the AP
 	// AP_STA so the captive portal can still scan for networks.
 	WiFi.mode(WIFI_AP_STA);
 	WiFi.softAP(device_id(WIFI_AP_PREFIX).c_str());   // "<manufacturer>-<MAC suffix>"

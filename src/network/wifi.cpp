@@ -135,7 +135,12 @@ bool Wifi::is_online() const {
 }
 
 void Wifi::sync_time() {
+	if (time_started) {
+		return;   // SNTP keeps itself updated once started
+	}
+
 	configTime(0, 0, WIFI_NTP_SERVER);   // UTC; SNTP updates the clock in the background
+	time_started = true;
 }
 
 String Wifi::ssid() const {
@@ -152,17 +157,18 @@ void Wifi::set_state(State next) {
 }
 
 void Wifi::apply_led() {
-	switch (state) {
-		case State::CONNECTED:
-			led.stop_blink();
-			led.on();
-			break;
-		case State::CAPTIVE:
-			led.blink(WIFI_BLINK_CAPTIVE_MS);
-			break;
-		default:   // DISCONNECTED / CONNECTING
-			led.blink(WIFI_BLINK_IDLE_MS);
-			break;
+	if (state == State::CONNECTED) {
+		led.stop_blink();
+		led.on();
+		led_interval = 0;
+		return;
+	}
+
+	// Only rebuild the timer when the blink rate actually changes.
+	const unsigned long interval = (state == State::CAPTIVE) ? WIFI_BLINK_CAPTIVE_MS : WIFI_BLINK_IDLE_MS;
+	if (interval != led_interval) {
+		led.blink(interval);
+		led_interval = interval;
 	}
 }
 

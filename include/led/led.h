@@ -9,6 +9,7 @@ class LED {
 	int pin;
 	TimerHandle_t timer = nullptr;
 	bool state = false;
+	uint8_t brightness = 255;
 
 	public:
 	LED(int pin = LED_BUILTIN, int MODE = OUTPUT);
@@ -25,4 +26,6 @@ class LED {
 	bool isOn();
 	void blink(unsigned long interval = 500);
 	void stop_blink();
+	void set_brightness(uint8_t brightness);
+	uint8_t get_brightness();
 };

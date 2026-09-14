@@ -10,12 +10,12 @@ LED::~LED() {
 }
 
 void LED::on() {
-	digitalWrite(pin, HIGH);
+	analogWrite(pin, brightness);   // PWM duty = brightness (255 = full on)
 	state = true;
 }
 
 void LED::off() {
-	digitalWrite(pin, LOW);
+	analogWrite(pin, 0);
 	state = false;
 }
 
@@ -37,6 +37,17 @@ void LED::set(bool state) {
 
 bool LED::isOn() {
 	return state;
+}
+
+void LED::set_brightness(uint8_t value) {
+	brightness = value;
+	if (state) {
+		analogWrite(pin, brightness);   // apply immediately if currently on
+	}
+}
+
+uint8_t LED::get_brightness() {
+	return brightness;
 }
 
 void LED::blink(unsigned long interval) {

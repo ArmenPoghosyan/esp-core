@@ -14,17 +14,23 @@ void CaptivePortal::begin() {
 
 	network.dns().start(WiFi.softAPIP());
 
-	server.on("/", [this]() { handle_root(); });
-	server.on("/add", HTTP_POST, [this]() { handle_add(); });
-	server.on("/remove", [this]() { handle_remove(); });
-	server.on("/connect", HTTP_POST, [this]() { handle_finish(); });
+	// Register routes once — WebServer::on() appends handlers and never frees
+	// them, so re-registering on every captive cycle would leak.
+	if (!routes_registered) {
+		server.on("/", [this]() { handle_root(); });
+		server.on("/add", HTTP_POST, [this]() { handle_add(); });
+		server.on("/remove", [this]() { handle_remove(); });
+		server.on("/connect", HTTP_POST, [this]() { handle_finish(); });
 
-	// Any other URL (incl. OS connectivity probes like /generate_204,
-	// /hotspot-detect.html) gets redirected to the portal, which is what makes
-	// phones show "Sign in to network" and auto-open the page.
-	server.onNotFound([this]() { redirect_to_portal(); });
+		// Any other URL (incl. OS connectivity probes like /generate_204,
+		// /hotspot-detect.html) gets redirected to the portal, which is what
+		// makes phones show "Sign in to network" and auto-open the page.
+		server.onNotFound([this]() { redirect_to_portal(); });
+
+		routes_registered = true;
+	}
+
 	server.begin();
-
 	running = true;
 }
 

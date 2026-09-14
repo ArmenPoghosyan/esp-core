@@ -38,6 +38,7 @@ class CaptivePortal {
 	WebServer server{80};
 	CredentialsStore credentials;
 	bool running = false;
+	bool routes_registered = false;
 	std::function<void()> finished_cb;
 };
 

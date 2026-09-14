@@ -54,6 +54,9 @@ class Wifi {
 	size_t index = 0;
 	unsigned long timer_ms = 0;
 
+	unsigned long led_interval = 0;   // current blink interval (0 = solid/off)
+	bool time_started = false;        // NTP started once
+
 	volatile bool toggle_requested = false;
 };
 

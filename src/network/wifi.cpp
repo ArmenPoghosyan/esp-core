@@ -2,6 +2,8 @@
 
 #include <WiFi.h>
 
+#include <time.h>
+
 #include "env.h"
 #include "network/captive_portal.h"
 #include "network/network.h"
@@ -46,6 +48,7 @@ void Wifi::loop() {
 		case State::CONNECTING:
 			if (WiFi.status() == WL_CONNECTED) {
 				set_state(State::CONNECTED);
+				sync_time();   // start NTP so TLS cert dates validate
 			} else if (millis() - timer_ms >= WIFI_CONNECT_TIMEOUT_MS) {
 				index++;
 				if (index < networks.size()) {
@@ -131,6 +134,15 @@ bool Wifi::is_connected() const {
 
 bool Wifi::is_captive() const {
 	return state == State::CAPTIVE;
+}
+
+bool Wifi::is_online() const {
+	// Connected and the clock has been set (past 2021) -> HTTPS can verify certs.
+	return is_connected() && time(nullptr) > 1609459200;
+}
+
+void Wifi::sync_time() {
+	configTime(0, 0, WIFI_NTP_SERVER);   // UTC; SNTP updates the clock in the background
 }
 
 String Wifi::ssid() const {

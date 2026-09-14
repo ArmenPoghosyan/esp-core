@@ -14,6 +14,7 @@
 #define WIFI_CONNECT_TIMEOUT_MS		15000			// per-credential connect attempt
 #define WIFI_RETRY_MS				10000			// wait before retrying after all fail
 #define WIFI_AP_PREFIX				DEVICE_MANUFACTURER	// AP + LAN hostname prefix (a MAC suffix is appended)
+#define WIFI_NTP_SERVER				"pool.ntp.org"		// time sync (needed for TLS cert validation)
 
 // ? Device information
 #define DEVICE_NAME					"Light"

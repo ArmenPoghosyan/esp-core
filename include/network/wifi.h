@@ -32,6 +32,7 @@ class Wifi {
 
 	bool is_connected() const;
 	bool is_captive() const;
+	bool is_online() const;   // connected AND clock synced (TLS-ready)
 	String ssid() const;
 	String ip() const;
 
@@ -41,6 +42,7 @@ class Wifi {
 	void set_state(State next);
 	void apply_led();
 	void try_current_credential();
+	void sync_time();
 
 	State state = State::DISCONNECTED;
 

@@ -2,6 +2,7 @@
 
 #include "network/captive_portal.h"
 #include "network/dns.h"
+#include "network/http.h"
 #include "network/wifi.h"
 
 Network::Network() = default;
@@ -26,6 +27,13 @@ net::CaptivePortal& Network::captive_portal() {
 		captive_portal_ = std::unique_ptr<net::CaptivePortal>(new net::CaptivePortal());
 	}
 	return *captive_portal_;
+}
+
+net::Http& Network::http() {
+	if (!http_) {
+		http_ = std::unique_ptr<net::Http>(new net::Http());
+	}
+	return *http_;
 }
 
 void Network::loop() {

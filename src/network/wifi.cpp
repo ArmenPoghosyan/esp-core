@@ -25,14 +25,6 @@ void Wifi::begin() {
 	WiFi.persistent(false);
 	WiFi.setAutoReconnect(false);   // we manage retries ourselves
 
-	// Set the hostname when the STA starts — the reliable point on esp32 2.0.x
-	// (setting it between mode() and begin() often no-ops).
-	WiFi.onEvent([](WiFiEvent_t event) {
-		if (event == ARDUINO_EVENT_WIFI_STA_START) {
-			WiFi.setHostname(device_id(WIFI_AP_PREFIX).c_str());
-		}
-	});
-
 	button.onLongPress(WIFI_BUTTON_HOLD_MS, [this]() { toggle_requested = true; });
 
 	connect();   // if nothing is stored this simply stays disconnected
@@ -87,7 +79,8 @@ void Wifi::connect() {
 		return;
 	}
 
-	WiFi.mode(WIFI_STA);  // set to station mode before connecting
+	WiFi.setHostname(device_id(WIFI_AP_PREFIX).c_str());
+	WiFi.mode(WIFI_STA);
 	try_current_credential();
 }
 

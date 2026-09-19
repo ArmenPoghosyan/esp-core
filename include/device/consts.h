@@ -3,10 +3,6 @@
 #include <cstdint>
 #include <variant>
 
-#define MEMORY_PREFERENCES	1
-#define MEMORY_EEPROM		2
-#define MEMORY_FLASH		3
-
 enum class DeviceType : uint8_t {
 	LIGHT = 1,
 	SWITCH,

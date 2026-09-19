@@ -2,6 +2,7 @@
 
 namespace {
 	constexpr const char* KEY_COUNT = "count";
+	constexpr const char* KEY_LAST = "last";   // SSID that connected most recently
 
 	// NVS keys are limited to 15 chars; "ssid"/"pass" + index stays well within.
 	String ssid_key(size_t index) {
@@ -77,4 +78,14 @@ bool CredentialsStore::remove_credentials(size_t index) {
 
 void CredentialsStore::clear_credentials() {
 	clear();
+}
+
+String CredentialsStore::get_last_connected() const {
+	return has_key(KEY_LAST) ? get_string(KEY_LAST) : String();
+}
+
+void CredentialsStore::set_last_connected(const String& ssid) {
+	if (get_last_connected() != ssid) {
+		put_string(KEY_LAST, ssid);
+	}
 }

@@ -1,6 +1,12 @@
 #include "store/store.h"
 
-#include "env.h"   // MEMORY_TYPE + MEMORY_* option macros (via device/consts.h)
+#include "env.h"   // MEMORY_TYPE + MEMORY_* option macros (via consts.h)
+
+// An undefined name counts as 0 inside #if, so a missing include would
+// silently select the EEPROM backend. Fail loudly instead.
+#if !defined(MEMORY_TYPE) || !defined(MEMORY_PREFERENCES)
+#error "MEMORY_TYPE is not defined: it comes from env.h and consts.h"
+#endif
 
 // Pull in the backend header for the selected memory type.
 #if MEMORY_TYPE == MEMORY_EEPROM
@@ -149,7 +155,7 @@ void Store::put_string(const char* key, const String& value) {
 			return;
 		}
 	}
-	records.push_back(Record{String(ns), String(key), value});
+	records.push_back(Record{ String(ns), String(key), value });
 	save_all(records);
 }
 

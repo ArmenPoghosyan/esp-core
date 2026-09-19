@@ -2,6 +2,7 @@
 
 #include "network/captive_portal.h"
 #include "network/dns.h"
+#include "network/esp_now.h"
 #include "network/http.h"
 #include "network/wifi.h"
 
@@ -36,6 +37,13 @@ net::Http& Network::http() {
 	return *http_;
 }
 
+net::EspNow& Network::now() {
+	if (!now_) {
+		now_ = std::unique_ptr<net::EspNow>(new net::EspNow());
+	}
+	return *now_;
+}
+
 void Network::loop() {
 	if (wifi_) {
 		wifi_->loop();
@@ -45,5 +53,8 @@ void Network::loop() {
 	}
 	if (captive_portal_) {
 		captive_portal_->loop();
+	}
+	if (now_) {
+		now_->loop();
 	}
 }

@@ -7,6 +7,7 @@ namespace net {
 	class Dns;
 	class CaptivePortal;
 	class Http;
+	class EspNow;
 }
 
 /**
@@ -25,6 +26,7 @@ class Network {
 	net::Dns& dns();
 	net::CaptivePortal& captive_portal();
 	net::Http& http();
+	net::EspNow& now();
 
 	/** Drive every module that has been created. Call from loop(). */
 	void loop();
@@ -34,6 +36,7 @@ class Network {
 	std::unique_ptr<net::Dns> dns_;
 	std::unique_ptr<net::CaptivePortal> captive_portal_;
 	std::unique_ptr<net::Http> http_;
+	std::unique_ptr<net::EspNow> now_;
 };
 
 // The single, globally-available network instance.

@@ -1,0 +1,9 @@
+#pragma once
+
+#define DEVICE_MODE_WIFI			1
+#define DEVICE_MODE_NOW_NODE		2
+#define DEVICE_MODE_NOW_CONTROLLER	3
+
+#define MEMORY_PREFERENCES			1
+#define MEMORY_EEPROM				2
+#define MEMORY_FLASH				3

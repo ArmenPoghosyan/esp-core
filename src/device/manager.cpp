@@ -66,3 +66,5 @@ void DeviceManager::notify_device_state_updated(const IDevice& device, AbilityTy
 		listener(device, type, value);
 	}
 }
+
+DeviceManager device_manager;

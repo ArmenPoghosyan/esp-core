@@ -25,3 +25,5 @@ class DeviceManager {
 	void on_device_state_updated(std::function<void(const IDevice&, AbilityType, const StateValue&)> callback);
 	void notify_device_state_updated(const IDevice& device, AbilityType type, const StateValue& value);
 };
+
+extern DeviceManager device_manager;

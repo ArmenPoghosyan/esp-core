@@ -24,12 +24,17 @@ template<AbilityType T, typename TState>
 class Ability : public AbilityBase {
 	protected:
 	TState state;
+	const char* name;
 
 	public:
-	Ability(IDevice* device, const TState& initial_state = TState()) : AbilityBase(device, T), state(initial_state) {}
+	Ability(IDevice* device, const TState& initial_state = TState(), const char* ability_name = "") : AbilityBase(device, T), state(initial_state), name(ability_name) {}
 
 	TState get_state() const {
 		return state;
+	}
+
+	const char* get_name() const {
+		return name;
 	}
 
 	void set_state(const TState& value) {

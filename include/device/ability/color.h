@@ -4,7 +4,7 @@
 
 class Color : public Ability<AbilityType::COLOR, uint32_t> {
 	public:
-	explicit Color(IDevice* device) : Ability(device, 0x00FFFFFF) {
+	explicit Color(IDevice* device) : Ability(device, 0x00FFFFFF, "color") {
 		// Default color is white in RGB packed format.
 	}
 

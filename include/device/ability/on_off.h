@@ -4,7 +4,7 @@
 
 class OnOff : public Ability<AbilityType::ON_OFF, bool> {
 	public:
-	explicit OnOff(IDevice* device) : Ability(device, false) {
+	explicit OnOff(IDevice* device) : Ability(device, false, "on_off") {
 		// On/Off defaults to off.
 	}
 

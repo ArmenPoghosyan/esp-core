@@ -1,6 +1,7 @@
 #pragma once
 
 #include "device/consts.h"
+#include "device/manager.h"
 
 #include <functional>
 #include <vector>

@@ -7,7 +7,7 @@
 #include "led/led.h"
 
 LED led(21);
-Light<OnOff, Brightness> light("light");
+Light<OnOff, Brightness> light(DEVICE_NAME);
 
 void setup()
 {

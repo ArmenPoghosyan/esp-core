@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include <atomic>
+#include <functional>
 #include <vector>
 
 #include "button/button.h"
@@ -34,6 +35,11 @@ namespace net {
 	 *
 	 * LED: slow blink while not connected, fast blink in captive mode, solid when
 	 * connected. Holding the button toggles captive mode.
+	 *
+	 * on_connected fires once a network is joined. on_disconnected fires when that
+	 * network is lost, when disconnect() is called, or when captive mode opens
+	 * while connected (is_connected() is false in captive mode). Both run in the
+	 * main task: from loop(), or from the call that caused the change.
 	 */
 	class Wifi {
 		public:
@@ -55,6 +61,9 @@ namespace net {
 		String ssid() const;
 		String ip() const;
 
+		void on_connected(std::function<void()> callback);      // joined a network (ssid() and ip() are valid)
+		void on_disconnected(std::function<void()> callback);   // lost it, disconnect(), or captive mode
+
 		private:
 		enum class State { DISCONNECTED, CONNECTING, CONNECTED, CAPTIVE };
 
@@ -63,10 +72,13 @@ namespace net {
 		void join();                         // ask the driver to join networks[index]
 		void next_network();
 		void on_join_failed(uint8_t reason);
-		void on_connected();
+		void on_joined();
 
 		void set_state(State next);          // also drives the LED
 		void sync_time();
+
+		void fire_connected();               // runs the on_connected callbacks
+		void fire_disconnected();            // runs the on_disconnected callbacks
 
 		State state = State::DISCONNECTED;
 
@@ -86,6 +98,9 @@ namespace net {
 
 		unsigned long blink_ms = 0;   // current LED blink rate, 0 = not blinking
 		bool time_started = false;    // NTP is started once
+
+		std::vector<std::function<void()>> connected_callbacks;
+		std::vector<std::function<void()>> disconnected_callbacks;
 	};
 
 }

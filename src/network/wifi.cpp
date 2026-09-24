@@ -66,7 +66,7 @@ namespace net {
 				// The SSID check rejects a WL_CONNECTED left over from the previous
 				// network while the driver is still switching.
 				if (WiFi.status() == WL_CONNECTED && WiFi.SSID() == networks[index].ssid) {
-					on_connected();
+					on_joined();
 				} else if (const uint8_t reason = join_failure.exchange(0)) {
 					on_join_failed(reason);
 				} else if (millis() - timer_ms >= WIFI_CONNECT_TIMEOUT_MS) {
@@ -78,6 +78,7 @@ namespace net {
 				if (WiFi.status() != WL_CONNECTED) {
 					log_i("lost '%s'", networks[index].ssid.c_str());
 					start_pass(networks[index].ssid);   // rejoin it first; fail over if it is gone
+					fire_disconnected();
 				}
 				break;
 
@@ -162,7 +163,7 @@ namespace net {
 		}
 	}
 
-	void Wifi::on_connected() {
+	void Wifi::on_joined() {
 		log_i("connected to '%s' after %lu ms", networks[index].ssid.c_str(), millis() - timer_ms);
 		set_state(State::CONNECTED);
 
@@ -171,17 +172,26 @@ namespace net {
 		}
 
 		sync_time();   // start NTP so TLS cert dates validate
+		fire_connected();
 	}
 
 	void Wifi::disconnect() {
+		const bool was_connected = state == State::CONNECTED;
+
 		WiFi.disconnect(true);   // true: also turn the radio off
 		set_state(State::DISCONNECTED);
 		timer_ms = millis();
+
+		if (was_connected) {
+			fire_disconnected();
+		}
 	}
 
 	// ---------------------------------------------------------------- captive (setup) mode
 
 	void Wifi::start_captive() {
+		const bool was_connected = state == State::CONNECTED;
+
 		if (state == State::CONNECTING) {
 			WiFi.disconnect();   // a join hopping across channels would make the setup AP unstable
 		}
@@ -193,6 +203,10 @@ namespace net {
 
 		network.captive_portal().on_finished([this]() { toggle_requested = true; });
 		network.captive_portal().begin();
+
+		if (was_connected) {
+			fire_disconnected();   // is_connected() is false from here on, even though the link may still be up
+		}
 	}
 
 	void Wifi::stop_captive() {
@@ -231,6 +245,32 @@ namespace net {
 
 	String Wifi::ip() const {
 		return WiFi.localIP().toString();
+	}
+
+	// ---------------------------------------------------------------- callbacks
+
+	void Wifi::on_connected(std::function<void()> callback) {
+		connected_callbacks.push_back(std::move(callback));
+	}
+
+	void Wifi::on_disconnected(std::function<void()> callback) {
+		disconnected_callbacks.push_back(std::move(callback));
+	}
+
+	// Both are called after the state change is complete, so a callback sees the
+	// new state and may safely call connect(), disconnect() or start_captive().
+	void Wifi::fire_connected() {
+		for (size_t i = 0; i < connected_callbacks.size(); i++) {
+			const std::function<void()> callback = connected_callbacks[i];   // a copy: it may register more
+			callback();
+		}
+	}
+
+	void Wifi::fire_disconnected() {
+		for (size_t i = 0; i < disconnected_callbacks.size(); i++) {
+			const std::function<void()> callback = disconnected_callbacks[i];   // a copy: it may register more
+			callback();
+		}
 	}
 
 	void Wifi::sync_time() {

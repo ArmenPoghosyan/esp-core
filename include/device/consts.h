@@ -15,6 +15,14 @@ enum class AbilityType : uint8_t {
 	COLOR,
 };
 
+enum JsonDeviceFlags : uint8_t {
+	JSON_DEVICE_INFO = 1 << 0,
+	JSON_DEVICE_ABILITIES = 1 << 1,
+	JSON_DEVICE_STATE = 1 << 2,
+
+	JSON_DEVICE_ALL = JSON_DEVICE_INFO | JSON_DEVICE_ABILITIES | JSON_DEVICE_STATE
+};
+
 using StateValue = std::variant<std::monostate, bool, uint8_t, uint16_t, uint32_t, int32_t, float>;
 
 template <typename T>

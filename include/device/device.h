@@ -3,6 +3,9 @@
 #include "device/consts.h"
 #include "device/manager.h"
 
+#include <Arduino.h>
+#include <ArduinoJson.h>
+
 #include <functional>
 #include <vector>
 
@@ -63,6 +66,18 @@ class IDevice {
 	 * @brief Registers a callback to be invoked whenever the state of an ability is updated.
 	 */
 	void on_state_updated(std::function<void(AbilityType, const StateValue&)> callback);
+
+	/**
+	 * @brief Writes the device into `json`, e.g. an object inside a larger document.
+	 * @param flags Which parts to write: JSON_DEVICE_INFO, JSON_DEVICE_ABILITIES
+	 *              and JSON_DEVICE_STATE, combined with |.
+	 */
+	void to_json(JsonObject json, uint8_t flags = JSON_DEVICE_ALL) const;
+
+	/**
+	 * @brief The same, as serialized JSON text.
+	 */
+	String to_json(uint8_t flags = JSON_DEVICE_ALL) const;
 
 	protected:
 	/**

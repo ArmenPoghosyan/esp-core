@@ -1,13 +1,10 @@
 #include "includes.h"
 
 #include "device/type/light.h"
-#include "device/ability/on_off.h"
-#include "device/ability/brightness.h"
-
 #include "led/led.h"
 
 LED led(21);
-Light<OnOff, Brightness> light(DEVICE_NAME);
+DimmableLight light("Light 1");
 
 void setup()
 {
@@ -19,8 +16,4 @@ void setup()
 void loop()
 {
 	loop_system();
-
-	light.set_brightness(random(0, 256));
-
-	delay(100);
 }

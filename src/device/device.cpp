@@ -5,11 +5,12 @@
 #include "device/ability.h"
 #include "device/manager.h"
 
+#include <type_traits>
 #include <utility>
 
 namespace {
 	// An id has exactly 18 digits, so it never starts with 0: [ID_MIN, 10 * ID_MIN).
-	constexpr uint64_t ID_MIN = 100000000000000000ULL;
+	constexpr uint64_t ID_MIN = 10000000000000000ULL;
 	constexpr uint64_t ID_COUNT = 17 * ID_MIN;   // how many distinct ids exist
 }
 
@@ -84,5 +85,49 @@ void IDevice::notify_state_updated(AbilityType type, const StateValue& value) {
 	for (const auto& callback : state_update_listeners) {
 		callback(type, value);
 	}
+}
+
+namespace {
+	// A StateValue into a JSON value: null when the ability has no value.
+	void state_to_json(JsonVariant json, const StateValue& value) {
+		std::visit([&json](const auto& v) {
+			if constexpr (std::is_same_v<std::decay_t<decltype(v)>, std::monostate>) {
+				json.clear();
+			} else {
+				json.set(v);
+			}
+			}, value);
+	}
+}
+
+void IDevice::to_json(JsonObject json, uint8_t flags) const {
+	if (flags & JSON_DEVICE_INFO) {
+		// json["id"] = id;
+		json["name"] = name;
+		json["type"] = static_cast<uint8_t>(type);
+	}
+
+	if (flags & JSON_DEVICE_ABILITIES) {
+		JsonArray list = json["abilities"].to<JsonArray>();
+		for (const AbilityBase* ability : abilities) {
+			list.add(static_cast<uint8_t>(ability->get_type()));
+		}
+	}
+
+	if (flags & JSON_DEVICE_STATE) {
+		JsonObject state = json["state"].to<JsonObject>();
+		for (const AbilityBase* ability : abilities) {
+			state_to_json(state[ability->get_name()].to<JsonVariant>(), ability->get_state_value());
+		}
+	}
+}
+
+String IDevice::to_json(uint8_t flags) const {
+	JsonDocument doc;
+	to_json(doc.to<JsonObject>(), flags);
+
+	String text;
+	serializeJson(doc, text);
+	return text;
 }
 

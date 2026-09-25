@@ -27,4 +27,4 @@ class DeviceManager {
 	void notify_device_state_updated(const IDevice& device, AbilityType type, const StateValue& value);
 };
 
-extern DeviceManager device_manager;
+extern DeviceManager& device_manager;

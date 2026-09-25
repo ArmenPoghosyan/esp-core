@@ -38,6 +38,11 @@ void DeviceManager::unregister_device(IDevice* device) {
 	states.erase(device);
 }
 
+IDevice* DeviceManager::get_device(uint64_t id) const {
+	const auto it = devices.find(id);
+	return it == devices.end() ? nullptr : it->second;
+}
+
 const std::map<uint64_t, IDevice*>& DeviceManager::get_devices() const {
 	return devices;
 }
@@ -63,4 +68,4 @@ void DeviceManager::notify_device_state_updated(const IDevice& device, AbilityTy
 	}
 }
 
-DeviceManager device_manager;
+DeviceManager& device_manager = DeviceManager::instance();

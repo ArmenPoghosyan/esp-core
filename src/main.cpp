@@ -12,7 +12,6 @@ Light<OnOff, Brightness> light(DEVICE_NAME);
 void setup()
 {
 	init_system();
-	light.register_device();
 	light.attach_to_led(led);
 	light.turn_on();
 }

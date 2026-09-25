@@ -1,8 +1,9 @@
 #include "device/manager.h"
 
+#include <Arduino.h>
+
 #include "device/device.h"
 
-#include <algorithm>
 #include <utility>
 
 DeviceManager& DeviceManager::instance() {
@@ -15,12 +16,7 @@ void DeviceManager::register_device(IDevice* device) {
 		return;
 	}
 
-	auto it = std::find(devices.begin(), devices.end(), device);
-	if (it != devices.end()) {
-		return;
-	}
-
-	devices.push_back(device);
+	devices[device->get_id()] = device;
 
 	device->on_state_updated([this, device](AbilityType type, const StateValue& value)
 		{
@@ -34,15 +30,15 @@ void DeviceManager::unregister_device(IDevice* device) {
 		return;
 	}
 
-	auto it = std::find(devices.begin(), devices.end(), device);
-	if (it != devices.end()) {
+	const auto it = devices.find(device->get_id());
+	if (it != devices.end() && it->second == device) {
 		devices.erase(it);
 	}
 
 	states.erase(device);
 }
 
-const std::vector<IDevice*>& DeviceManager::get_devices() const {
+const std::map<uint64_t, IDevice*>& DeviceManager::get_devices() const {
 	return devices;
 }
 

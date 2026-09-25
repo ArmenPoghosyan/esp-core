@@ -21,6 +21,6 @@
 #define WIFI_NTP_SERVER				"pool.ntp.org"		// time sync (needed for TLS cert validation)
 
 // ? Device information
-#define DEVICE_NAME					"Light"
 #define DEVICE_MANUFACTURER			"APLink"
 #define DEVICE_FIRMWARE_VERSION		"1.0.0"
+#define DEVICE_SOFTWARE_VERSION		"1.0.0"

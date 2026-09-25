@@ -19,8 +19,11 @@ class IDevice {
 
 	DeviceType type;
 	const char* name;
+	uint64_t id;
 	std::vector<AbilityBase*> abilities;
 	std::vector<std::function<void(AbilityType, const StateValue&)>> state_update_listeners;
+
+	uint64_t generate_id() const;
 
 	public:
 	IDevice(DeviceType type, const char* name);
@@ -35,6 +38,11 @@ class IDevice {
 	 * @brief Get the name of the device.
 	 */
 	const char* get_name() const;
+
+	/**
+	 * @brief Get the unique id of the device.
+	 */
+	uint64_t get_id() const;
 
 	/**
 	 * @brief Registers a new ability with the device.

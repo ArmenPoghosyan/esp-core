@@ -79,6 +79,21 @@ class IDevice {
 	 */
 	String to_json(uint8_t flags = JSON_DEVICE_ALL) const;
 
+	/**
+	 * @brief Applies a state object as written by to_json(JSON_DEVICE_STATE),
+	 *        e.g. {"on_off": true, "brightness": 50}.
+	 *
+	 * Only abilities the device has are changed: an unknown name, or a value
+	 * of the wrong type for the ability, is skipped.
+	 * @return true when every item was applied.
+	 */
+	bool from_json(JsonObjectConst state);
+
+	/**
+	 * @brief The same, from JSON text. false when the text is not a JSON object.
+	 */
+	bool from_json(const String& state);
+
 	protected:
 	/**
 	 * @brief Notifies all registered listeners that the state of an ability has been updated.

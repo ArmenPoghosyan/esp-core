@@ -131,3 +131,38 @@ String IDevice::to_json(uint8_t flags) const {
 	return text;
 }
 
+bool IDevice::from_json(JsonObjectConst state) {
+	bool all_applied = true;
+
+	for (JsonPairConst item : state) {
+		// Only an ability this device has may be changed.
+		AbilityBase* target = nullptr;
+		for (AbilityBase* ability : abilities) {
+			if (strcmp(ability->get_name(), item.key().c_str()) == 0) {
+				target = ability;
+				break;
+			}
+		}
+
+		if (!target) {
+			log_w("'%s' has no ability '%s'", name, item.key().c_str());
+			all_applied = false;
+		} else if (!target->set_state_from_json(item.value())) {
+			log_w("'%s': bad value for '%s'", name, item.key().c_str());
+			all_applied = false;
+		}
+	}
+
+	return all_applied;
+}
+
+bool IDevice::from_json(const String& state) {
+	JsonDocument doc;
+	if (deserializeJson(doc, state) != DeserializationError::Ok || !doc.is<JsonObjectConst>()) {
+		log_w("'%s': state is not a JSON object", name);
+		return false;
+	}
+
+	return from_json(doc.as<JsonObjectConst>());
+}
+

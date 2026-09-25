@@ -16,6 +16,9 @@ class AbilityBase {
 	virtual StateValue get_state_value() const = 0;
 	virtual bool set_state_value(const StateValue& value) = 0;
 
+	/** Sets the state from a JSON value; false when the value is not of this ability's type. */
+	virtual bool set_state_from_json(JsonVariantConst value) = 0;
+
 	protected:
 	IDevice* get_device() const;
 	void notify_state_changed(const StateValue& value);
@@ -59,5 +62,13 @@ class Ability : public AbilityBase {
 
 		set_state(*typed_value);
 		return true;
+	}
+
+	bool set_state_from_json(JsonVariantConst value) override {
+		if (!value.is<TState>()) {
+			return false;   // wrong JSON type, or an integer outside TState's range
+		}
+
+		return set_state_value(StateValue(value.as<TState>()));
 	}
 };

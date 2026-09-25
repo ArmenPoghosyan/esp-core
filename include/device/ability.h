@@ -12,6 +12,7 @@ class AbilityBase {
 	virtual ~AbilityBase() = default;
 
 	AbilityType get_type() const;
+	virtual const char* get_name() const = 0;
 	virtual StateValue get_state_value() const = 0;
 	virtual bool set_state_value(const StateValue& value) = 0;
 
@@ -33,7 +34,7 @@ class Ability : public AbilityBase {
 		return state;
 	}
 
-	const char* get_name() const {
+	const char* get_name() const override {
 		return name;
 	}
 

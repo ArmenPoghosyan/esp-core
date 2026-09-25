@@ -1,6 +1,9 @@
 #pragma once
 
 #include "device/device.h"
+#include "device/ability/on_off.h"
+#include "device/ability/brightness.h"
+#include "device/ability/color.h"
 #include "led/led.h"
 
 /**
@@ -42,3 +45,8 @@ class Light : public GenericDevice<Abilities...> {
 	private:
 	LED* led = nullptr;
 };
+
+typedef Light<OnOff> SimpleLight;
+typedef Light<OnOff, Brightness> DimmableLight;
+typedef Light<OnOff, Brightness, Color> ColorDimmableLight;
+typedef Light<OnOff, Color> ColorLight;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "device/device.h"
+#include "device/ability/on_off.h"
 
 /**
  * @brief A class representing a switch device.
@@ -11,3 +12,5 @@ class Switch : public GenericDevice<Abilities...> {
 	public:
 	Switch(const char* name) : GenericDevice<Abilities...>(DeviceType::SWITCH, name) {}
 };
+
+typedef Switch<OnOff> SimpleSwitch;

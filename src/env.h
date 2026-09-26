@@ -20,6 +20,10 @@
 #define WIFI_AP_PREFIX				DEVICE_MANUFACTURER	// AP + LAN hostname prefix (a MAC suffix is appended)
 #define WIFI_NTP_SERVER				"pool.ntp.org"		// time sync (needed for TLS cert validation)
 
+#define NETWORK_TASK_STACK			8192			// bytes; the setup portal's web server needs most of it
+#define NETWORK_TASK_PRIORITY		1				// same as the Arduino loop task
+#define NETWORK_LOOP_MS				10				// period of Network::loop()
+
 // ? Device information
 #define DEVICE_ID_LENGTH			18
 #define DEVICE_NAME					"APLink Controller"

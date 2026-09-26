@@ -8,11 +8,11 @@ DimmableLight light("Light 1");
 
 void setup()
 {
-	init_system();
+	network.begin();
 	light.attach_to_led(led);
 }
 
 void loop()
 {
-	loop_system();
+	//
 }

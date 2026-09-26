@@ -1,5 +1,8 @@
 #pragma once
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+
 #include <memory>
 
 namespace net {
@@ -28,10 +31,16 @@ class Network {
 	net::Http& http();
 	net::EspNow& now();
 
-	/** Drive every module that has been created. Call from loop(). */
+	/** Start the configured modules and the task that drives them. Call once from setup(). */
+	void begin();
+
+	/** Drive every module that has been created. Called by the network task. */
 	void loop();
 
 	private:
+	static void run(void* self);   // the network task: loop() forever
+	TaskHandle_t task = nullptr;
+
 	std::unique_ptr<net::Wifi> wifi_;
 	std::unique_ptr<net::Dns> dns_;
 	std::unique_ptr<net::CaptivePortal> captive_portal_;

@@ -42,12 +42,20 @@ bool LED::isOn() {
 void LED::set_brightness(uint8_t value) {
 	brightness = value;
 	if (state) {
-		analogWrite(pin, brightness);   // apply immediately if currently on
+		analogWrite(pin, brightness);
 	}
 }
 
-uint8_t LED::get_brightness() {
+void LED::set_brightness_percentage(uint8_t value) {
+	set_brightness(map(value, 0, 100, 0, 255));
+}
+
+uint8_t LED::get_brightness() const {
 	return brightness;
+}
+
+uint8_t LED::get_brightness_percentage() const {
+	return map(brightness, 0, 255, 0, 100);
 }
 
 void LED::blink(unsigned long interval) {

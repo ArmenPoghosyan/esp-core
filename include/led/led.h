@@ -27,5 +27,7 @@ class LED {
 	void blink(unsigned long interval = 500);
 	void stop_blink();
 	void set_brightness(uint8_t brightness);
-	uint8_t get_brightness();
+	void set_brightness_percentage(uint8_t brightness);
+	uint8_t get_brightness() const;
+	uint8_t get_brightness_percentage() const;
 };

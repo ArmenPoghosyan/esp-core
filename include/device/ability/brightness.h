@@ -4,8 +4,8 @@
 
 class Brightness : public Ability<AbilityType::BRIGHTNESS, uint8_t> {
 	public:
-	explicit Brightness(IDevice* device) : Ability(device, 100, "brightness") {
-		// Brightness defaults to 100%.
+	explicit Brightness(IDevice* device) : Ability(device, 0, "brightness") {
+		// Brightness defaults to 0%.
 	}
 
 	uint8_t get_brightness() const {

@@ -22,24 +22,29 @@ class Light : public GenericDevice<Abilities...> {
 	void attach_to_led(LED& led) {
 		this->led = &led;
 
-		this->on_state_updated(
-			[this](AbilityType type, const StateValue& value) {
+		const auto apply_to_led = [this](AbilityType type, const StateValue& value)
+			{
 				if (!this->led) return;
 				switch (type) {
-					case AbilityType::ON_OFF: {
-						bool is_on = convert_state<bool>(value);
-						this->led->set(is_on);
-					} break;
+					case AbilityType::ON_OFF:
+						this->led->set(convert_state<bool>(value));
+						break;
 
-					case AbilityType::BRIGHTNESS: {
-						uint8_t brightness = convert_state<uint8_t>(value);
-						this->led->set_brightness(brightness);
-					} break;
+					case AbilityType::BRIGHTNESS:
+						this->led->set_brightness_percentage(convert_state<uint8_t>(value));
+						break;
 
 					default: break;
 				}
 			}
-		);
+			//
+		;
+
+		for (const AbilityState& state : this->get_ability_states()) {
+			apply_to_led(state.type, state.value);
+		}
+
+		this->on_state_updated(apply_to_led);
 	}
 
 	private:

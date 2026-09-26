@@ -4,14 +4,19 @@
 
 #include "device/ability.h"
 #include "device/manager.h"
+#include "env.h"
 
 #include <type_traits>
 #include <utility>
 
 namespace {
-	// An id has exactly 18 digits, so it never starts with 0: [ID_MIN, 10 * ID_MIN).
-	constexpr uint64_t ID_MIN = 10000000000000000ULL;
-	constexpr uint64_t ID_COUNT = 17 * ID_MIN;   // how many distinct ids exist
+	constexpr uint64_t power_of_ten(unsigned exponent) {
+		return exponent == 0 ? 1 : 10 * power_of_ten(exponent - 1);
+	}
+
+	static_assert(DEVICE_ID_LENGTH >= 1 && DEVICE_ID_LENGTH <= 19, "DEVICE_ID_LENGTH must be 1 to 19 digits to fit a uint64_t");
+	constexpr uint64_t ID_MIN = power_of_ten(DEVICE_ID_LENGTH - 1);
+	constexpr uint64_t ID_COUNT = 9 * ID_MIN;   // how many distinct ids exist
 }
 
 IDevice::IDevice(DeviceType type, const char* name) : type(type), name(name) {

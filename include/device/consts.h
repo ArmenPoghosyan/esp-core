@@ -19,8 +19,10 @@ enum JsonDeviceFlags : uint8_t {
 	JSON_DEVICE_INFO = 1 << 0,
 	JSON_DEVICE_ABILITIES = 1 << 1,
 	JSON_DEVICE_STATE = 1 << 2,
+	JSON_BOARD_INFO = 1 << 3,
+	JSON_DEVICE_LIST = 1 << 4,
 
-	JSON_DEVICE_ALL = JSON_DEVICE_INFO | JSON_DEVICE_ABILITIES | JSON_DEVICE_STATE
+	JSON_DEVICE_ALL = JSON_DEVICE_INFO | JSON_DEVICE_ABILITIES | JSON_DEVICE_STATE | JSON_BOARD_INFO | JSON_DEVICE_LIST,
 };
 
 using StateValue = std::variant<std::monostate, bool, uint8_t, uint16_t, uint32_t, int32_t, float>;

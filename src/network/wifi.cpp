@@ -6,20 +6,12 @@
 
 #include <algorithm>
 
+#include "device/manager.h"
 #include "env.h"
 #include "network/captive_portal.h"
 #include "network/network.h"
 
 namespace net {
-
-	namespace {
-		// "<prefix>-<MAC suffix>", e.g. "APLink-926C".
-		String device_id(const char* prefix) {
-			char buf[32];
-			snprintf(buf, sizeof(buf), "%s-%04X", prefix, static_cast<uint16_t>(ESP.getEfuseMac() & 0xFFFF));
-			return String(buf);
-		}
-	}
 
 	Wifi::Wifi() : led(WIFI_LED_PIN), button(WIFI_BUTTON_PIN) {}
 
@@ -115,7 +107,7 @@ namespace net {
 			std::rotate(networks.begin(), it, it + 1);
 		}
 
-		WiFi.setHostname(device_id(WIFI_AP_PREFIX).c_str());
+		WiFi.setHostname(device_manager.get_ap_name().c_str());
 		WiFi.mode(WIFI_STA);
 		start_network();
 	}
@@ -198,7 +190,7 @@ namespace net {
 
 		// AP_STA keeps a current connection alive while the setup portal is open.
 		WiFi.mode(WIFI_AP_STA);
-		WiFi.softAP(device_id(WIFI_AP_PREFIX).c_str());   // "<manufacturer>-<MAC suffix>"
+		WiFi.softAP(device_manager.get_ap_name().c_str());   // "<manufacturer>-<MAC suffix>"
 		set_state(State::CAPTIVE);
 
 		network.captive_portal().on_finished([this]() { toggle_requested = true; });

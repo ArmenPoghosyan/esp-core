@@ -21,6 +21,9 @@
 #define WIFI_NTP_SERVER				"pool.ntp.org"		// time sync (needed for TLS cert validation)
 
 // ? Device information
+#define DEVICE_ID_LENGTH			18
+#define DEVICE_NAME					"APLink Controller"
+#define DEVICE_BOARD				"Lolin S2 Mini"
 #define DEVICE_MANUFACTURER			"APLink"
-#define DEVICE_FIRMWARE_VERSION		"1.0.0"
+#define DEVICE_HARDWARE_VERSION		"1.0.0"
 #define DEVICE_SOFTWARE_VERSION		"1.0.0"

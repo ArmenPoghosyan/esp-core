@@ -19,12 +19,12 @@ class Light : public GenericDevice<Abilities...> {
 	 * @brief Attaches the light device to a physical LED.
 	 * This allows the light device to control the LED based on its state updates.
 	 */
-	void attach_to_led(LED& led) {
+	Light& attach_to_led(LED& led) {
 		this->led = &led;
 
 		const auto apply_to_led = [this](AbilityType type, const StateValue& value)
 			{
-				if (!this->led) return;
+				if (!this->led || from_led) return;   // a change that came from the LED is not echoed back
 				switch (type) {
 					case AbilityType::ON_OFF:
 						this->led->set(convert_state<bool>(value));
@@ -45,10 +45,21 @@ class Light : public GenericDevice<Abilities...> {
 		}
 
 		this->on_state_updated(apply_to_led);
+
+		this->led->on_change([this](bool on)
+			{
+				from_led = true;
+				this->OnOff::set_state(on);
+				from_led = false;
+			}
+		);
+
+		return *this;
 	}
 
 	private:
 	LED* led = nullptr;
+	bool from_led = false;
 };
 
 typedef Light<OnOff> SimpleLight;

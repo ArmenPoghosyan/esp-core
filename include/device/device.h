@@ -23,6 +23,8 @@ class IDevice {
 	DeviceType type;
 	const char* name;
 	uint64_t id;
+	bool passive = false;
+	bool reportable = false;
 	std::vector<AbilityBase*> abilities;
 	std::vector<std::function<void(AbilityType, const StateValue&)>> state_update_listeners;
 
@@ -46,6 +48,21 @@ class IDevice {
 	 * @brief Get the unique id of the device.
 	 */
 	uint64_t get_id() const;
+
+	/**
+	 * @brief Marks the device as passive (a sensor, a camera): it only sends data
+	 *        and is never commanded. Actionable (the default) devices are commanded.
+	 */
+	IDevice& make_passive();
+
+	/**
+	 * @brief Makes an actionable device report its own changes (a wall button, a remote)
+	 *        to the server, which is otherwise the only one to change it.
+	 */
+	IDevice& make_reportable();
+
+	bool is_passive() const;
+	bool is_reportable() const;
 
 	/**
 	 * @brief Registers a new ability with the device.

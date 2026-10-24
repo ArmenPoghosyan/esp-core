@@ -11,12 +11,18 @@ LED::~LED() {
 
 void LED::on() {
 	analogWrite(pin, brightness);   // PWM duty = brightness (255 = full on)
-	state = true;
+	if (!state) {
+		state = true;
+		fire_change();
+	}
 }
 
 void LED::off() {
 	analogWrite(pin, 0);
-	state = false;
+	if (state) {
+		state = false;
+		fire_change();
+	}
 }
 
 void LED::toggle() {
@@ -56,6 +62,17 @@ uint8_t LED::get_brightness() const {
 
 uint8_t LED::get_brightness_percentage() const {
 	return map(brightness, 0, 255, 0, 100);
+}
+
+void LED::on_change(std::function<void(bool)> callback) {
+	change_callbacks.push_back(std::move(callback));
+}
+
+// Called after the state has changed, so a callback sees the new state.
+void LED::fire_change() {
+	for (const auto& callback : change_callbacks) {
+		callback(state);
+	}
 }
 
 void LED::blink(unsigned long interval) {

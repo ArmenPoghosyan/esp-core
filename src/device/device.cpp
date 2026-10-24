@@ -40,6 +40,24 @@ uint64_t IDevice::get_id() const {
 	return id;
 }
 
+IDevice& IDevice::make_passive() {
+	passive = true;
+	return *this;
+}
+
+IDevice& IDevice::make_reportable() {
+	reportable = true;
+	return *this;
+}
+
+bool IDevice::is_passive() const {
+	return passive;
+}
+
+bool IDevice::is_reportable() const {
+	return reportable;
+}
+
 uint64_t IDevice::generate_id() const {
 	// FNV-1a over the MAC bytes and then the name. The MAC is the factory one
 	// (eFuse), so it never changes and no two chips share it.
@@ -110,6 +128,8 @@ void IDevice::to_json(JsonObject json, uint8_t flags) const {
 		// json["id"] = id;
 		json["name"] = name;
 		json["type"] = static_cast<uint8_t>(type);
+		json["passive"] = passive;
+		json["reportable"] = reportable;
 	}
 
 	if (flags & JSON_DEVICE_ABILITIES) {

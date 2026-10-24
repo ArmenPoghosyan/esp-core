@@ -4,15 +4,17 @@
 #include "led/led.h"
 
 LED led(21);
-DimmableLight light("Light 1");
+SimpleLight light("Light 1");
 
 void setup()
 {
+	light.attach_to_led(led)
+		.make_passive()
+		.make_reportable();
+
 	network.begin();
-	light.attach_to_led(led);
 }
 
 void loop()
 {
-	//
 }

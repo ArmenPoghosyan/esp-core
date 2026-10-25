@@ -108,7 +108,7 @@ JsonDocument DeviceManager::to_json_document(uint8_t flags) const {
 	JsonObject json = doc.to<JsonObject>();
 
 	if (flags & JSON_BOARD_INFO) {
-		JsonObject info = json["info"].to<JsonObject>();
+		JsonObject info = json["board"].to<JsonObject>();
 		info["name"] = DEVICE_NAME;
 		info["board"] = get_board_name();
 		info["hw_version"] = DEVICE_HARDWARE_VERSION;

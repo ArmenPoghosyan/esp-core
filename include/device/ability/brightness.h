@@ -2,17 +2,21 @@
 
 #include "device/ability.h"
 
-class Brightness : public Ability<AbilityType::BRIGHTNESS, uint8_t> {
+class Brightness : public Ability<AbilityType::BRIGHTNESS, int> {
 	public:
 	explicit Brightness(IDevice* device) : Ability(device, 0, "brightness") {
 		// Brightness defaults to 0%.
 	}
 
-	uint8_t get_brightness() const {
+	int get_brightness() const {
 		return get_state();
 	}
 
-	void set_brightness(uint8_t value) {
+	void set_brightness(int value) {
+		if (value < 0) {
+			value = 0;
+		}
+
 		if (value > 100) {
 			value = 100;
 		}

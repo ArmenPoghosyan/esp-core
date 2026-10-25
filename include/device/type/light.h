@@ -31,7 +31,7 @@ class Light : public GenericDevice<Abilities...> {
 						break;
 
 					case AbilityType::BRIGHTNESS:
-						this->led->set_brightness_percentage(convert_state<uint8_t>(value));
+						this->led->set_brightness_percentage(convert_state<int>(value));
 						break;
 
 					default: break;

@@ -7,6 +7,7 @@
 #include "network/esp_now.h"
 #include "network/http.h"
 #include "network/iam.h"
+#include "network/mqtt.h"
 #include "network/wifi.h"
 
 Network::Network() = default;
@@ -55,6 +56,13 @@ net::Iam& Network::iam() {
 	return *iam_;
 }
 
+net::Mqtt& Network::mqtt() {
+	if (!mqtt_) {
+		mqtt_ = std::unique_ptr<net::Mqtt>(new net::Mqtt());
+	}
+	return *mqtt_;
+}
+
 void Network::begin() {
 	if (task) {
 		return;   // already started
@@ -63,6 +71,7 @@ void Network::begin() {
 	#if DEVICE_MODE == DEVICE_MODE_WIFI
 	wifi().begin();
 	iam().begin();
+	mqtt().begin();
 	#endif
 
 	// A task rather than a timer: the modules need a real stack (the setup
@@ -94,5 +103,8 @@ void Network::loop() {
 	}
 	if (iam_) {
 		iam_->loop();
+	}
+	if (mqtt_) {
+		mqtt_->loop();
 	}
 }

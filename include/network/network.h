@@ -12,6 +12,7 @@ namespace net {
 	class Http;
 	class EspNow;
 	class Iam;
+	class Mqtt;
 }
 
 /**
@@ -32,6 +33,7 @@ class Network {
 	net::Http& http();
 	net::EspNow& now();
 	net::Iam& iam();
+	net::Mqtt& mqtt();
 
 	/** Start the configured modules and the task that drives them. Call once from setup(). */
 	void begin();
@@ -49,6 +51,7 @@ class Network {
 	std::unique_ptr<net::Http> http_;
 	std::unique_ptr<net::EspNow> now_;
 	std::unique_ptr<net::Iam> iam_;
+	std::unique_ptr<net::Mqtt> mqtt_;
 };
 
 // The single, globally-available network instance.

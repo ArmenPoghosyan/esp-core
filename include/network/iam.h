@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include <ArduinoJson.h>
 
 namespace net {
 
@@ -10,8 +9,9 @@ namespace net {
  *        device_manager.to_json(), on every Wi-Fi connect and reconnect.
  *        Configured in env.h.
  *
- * The server answers {"status": true, "state": {"<device id>": {...}, ...}}.
- * Each state is applied to the device with that id, as IDevice::from_json().
+ * The server answers {"status": true, "state": {"<device id>": {...}, ...}, "channel": "..."}.
+ * The state is applied with DeviceManager::apply_state(), and the channel is
+ * handed to Mqtt::connect(); the server issues a new channel with every answer.
  *
  * A failed request (an HTTP error, or "status" not true) is retried after
  * IAM_RETRY_MS, the wait doubling on each further failure up to IAM_RETRY_MAX_MS.
@@ -25,8 +25,6 @@ class Iam {
 	void loop();
 
 	private:
-	void apply_state(JsonObjectConst state);   // {"<device id>": {"on_off": true, ...}, ...}
-
 	bool pending = false;           // the server has not yet accepted /iam for this connection
 	unsigned long last_try_ms = 0;
 	unsigned long wait_ms = 0;      // before the next try, 0 = at once

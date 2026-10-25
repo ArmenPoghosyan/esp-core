@@ -134,4 +134,16 @@ String DeviceManager::to_json(uint8_t flags) const {
 	return text;
 }
 
+void DeviceManager::apply_state(JsonObjectConst state) {
+	for (JsonPairConst item : state) {
+		IDevice* device = get_device(strtoull(item.key().c_str(), nullptr, 10));
+		if (!device) {
+			log_w("no device %s", item.key().c_str());
+			continue;
+		}
+
+		device->from_json(item.value().as<JsonObjectConst>());
+	}
+}
+
 DeviceManager& device_manager = DeviceManager::instance();

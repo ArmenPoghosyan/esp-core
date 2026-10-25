@@ -24,14 +24,22 @@
 #define NETWORK_LOOP_MS				10				// period of Network::loop()
 
 // ? Server
-#define SERVER_URL					"https://devices.aplink.am"
+#define SERVER_URL					"https://iot.aplink.am"
 #define IAM_RETRY_MS				5000			// wait after a failed /iam; doubles on each further failure
 #define IAM_RETRY_MAX_MS			300000			// upper bound for that wait
+
+#define MQTT_HOST					"iot.aplink.am"
+#define MQTT_PORT					8883			// TLS
+#define MQTT_USERNAME				"aplink_iot"
+#define MQTT_PASSWORD				"7094a64deda36a66e72f888a6f98a081"
+#define MQTT_BUFFER_SIZE			1024			// bytes; the largest message, topic included
+#define MQTT_TIMEOUT_S				10				// TCP connect and TLS handshake, each; blocks the network task
+#define MQTT_RETRY_MS				5000			// wait after a failed broker connect; doubles on each further failure
+#define MQTT_RETRY_MAX_MS			300000			// upper bound for that wait
 
 // ? Device information
 #define DEVICE_ID_LENGTH			18
 #define DEVICE_NAME					"APLink Controller"
-#define DEVICE_BOARD				"Lolin S2 Mini"
 #define DEVICE_MANUFACTURER			"APLink"
 #define DEVICE_HARDWARE_VERSION		"1.0.0"
 #define DEVICE_SOFTWARE_VERSION		"1.0.0"

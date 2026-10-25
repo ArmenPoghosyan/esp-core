@@ -36,6 +36,12 @@ class DeviceManager {
 
 	JsonDocument to_json_document(uint8_t flags = JSON_DEVICE_ALL) const;
 	String to_json(uint8_t flags = JSON_DEVICE_ALL) const;
+
+	/**
+	 * @brief Applies {"<device id>": {"on_off": true, ...}, ...}: each object to
+	 *        the device with that id, as IDevice::from_json(). Unknown ids are skipped.
+	 */
+	void apply_state(JsonObjectConst state);
 };
 
 extern DeviceManager& device_manager;

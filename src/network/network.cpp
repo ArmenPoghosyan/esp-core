@@ -2,6 +2,7 @@
 
 #include "env.h"
 #include "network/captive_portal.h"
+#include "network/device_cert.h"
 #include "network/dns.h"
 #include "network/esp_now.h"
 #include "network/http.h"
@@ -34,6 +35,7 @@ net::CaptivePortal& Network::captive_portal() {
 net::Http& Network::http() {
 	if (!http_) {
 		http_ = std::unique_ptr<net::Http>(new net::Http());
+		http_->set_client_cert(device_crt, device_key);
 	}
 	return *http_;
 }

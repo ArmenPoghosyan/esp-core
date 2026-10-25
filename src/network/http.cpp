@@ -31,6 +31,11 @@ void Http::set_ca_cert(const char* pem) {
 	ca_cert = pem;
 }
 
+void Http::set_client_cert(const char* crt_pem, const char* key_pem) {
+	client_crt = crt_pem;
+	client_key = key_pem;
+}
+
 void Http::set_timeout(uint16_t ms) {
 	timeout_ms = ms;
 }
@@ -49,6 +54,10 @@ HttpResponse Http::request(const char* method, const String& url, const String* 
 			secure.setCACert(ca_cert);                  // pinned single root CA
 		} else {
 			secure.setCACertBundle(ca_cert_bundle);     // verify against Mozilla roots
+		}
+		if (client_crt && client_key) {
+			secure.setCertificate(client_crt);
+			secure.setPrivateKey(client_key);
 		}
 		began = http.begin(secure, url);
 	} else {
@@ -72,6 +81,12 @@ HttpResponse Http::request(const char* method, const String& url, const String* 
 		response.status = http.POST(*body);
 	} else {
 		response.status = http.GET();
+	}
+
+	if (response.status <= 0 && url.startsWith("https:")) {
+		char error[100];
+		const int code = secure.lastError(error, sizeof(error));
+		log_e("TLS error %d: %s (free heap %u)", code, error, ESP.getFreeHeap());
 	}
 
 	if (response.status > 0) {

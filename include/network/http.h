@@ -28,6 +28,7 @@ class Http {
 	void set_header(const String& name, const String& value);   // added to every request
 	void clear_headers();
 	void set_ca_cert(const char* pem);                          // pin one root CA; nullptr = use bundle
+	void set_client_cert(const char* crt_pem, const char* key_pem);   // present this certificate to servers that ask for one (mTLS)
 	void set_timeout(uint16_t ms);
 
 	private:
@@ -40,6 +41,8 @@ class Http {
 
 	std::vector<Header> headers;
 	const char* ca_cert = nullptr;
+	const char* client_crt = nullptr;
+	const char* client_key = nullptr;
 	uint16_t timeout_ms = 10000;
 };
 

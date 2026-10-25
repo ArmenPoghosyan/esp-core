@@ -6,6 +6,7 @@
 #include "network/dns.h"
 #include "network/esp_now.h"
 #include "network/http.h"
+#include "network/iam.h"
 #include "network/wifi.h"
 
 Network::Network() = default;
@@ -47,6 +48,13 @@ net::EspNow& Network::now() {
 	return *now_;
 }
 
+net::Iam& Network::iam() {
+	if (!iam_) {
+		iam_ = std::unique_ptr<net::Iam>(new net::Iam());
+	}
+	return *iam_;
+}
+
 void Network::begin() {
 	if (task) {
 		return;   // already started
@@ -54,6 +62,7 @@ void Network::begin() {
 
 	#if DEVICE_MODE == DEVICE_MODE_WIFI
 	wifi().begin();
+	iam().begin();
 	#endif
 
 	// A task rather than a timer: the modules need a real stack (the setup
@@ -82,5 +91,8 @@ void Network::loop() {
 	}
 	if (now_) {
 		now_->loop();
+	}
+	if (iam_) {
+		iam_->loop();
 	}
 }

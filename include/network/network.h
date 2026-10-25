@@ -11,6 +11,7 @@ namespace net {
 	class CaptivePortal;
 	class Http;
 	class EspNow;
+	class Iam;
 }
 
 /**
@@ -30,6 +31,7 @@ class Network {
 	net::CaptivePortal& captive_portal();
 	net::Http& http();
 	net::EspNow& now();
+	net::Iam& iam();
 
 	/** Start the configured modules and the task that drives them. Call once from setup(). */
 	void begin();
@@ -46,6 +48,7 @@ class Network {
 	std::unique_ptr<net::CaptivePortal> captive_portal_;
 	std::unique_ptr<net::Http> http_;
 	std::unique_ptr<net::EspNow> now_;
+	std::unique_ptr<net::Iam> iam_;
 };
 
 // The single, globally-available network instance.

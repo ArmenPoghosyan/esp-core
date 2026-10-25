@@ -18,11 +18,15 @@
 #define WIFI_PREFER_LAST_GOOD		1				// 1: start with the network that worked last, 0: always primary -> backups
 #define WIFI_RETRY_MS				10000			// wait before retrying after all fail
 #define WIFI_AP_PREFIX				DEVICE_MANUFACTURER	// AP + LAN hostname prefix (a MAC suffix is appended)
-#define WIFI_NTP_SERVER				"pool.ntp.org"		// time sync (needed for TLS cert validation)
 
 #define NETWORK_TASK_STACK			8192			// bytes; the setup portal's web server needs most of it
 #define NETWORK_TASK_PRIORITY		1				// same as the Arduino loop task
 #define NETWORK_LOOP_MS				10				// period of Network::loop()
+
+// ? Server
+#define SERVER_URL					"https://devices.aplink.am"
+#define IAM_RETRY_MS				5000			// wait after a failed /iam; doubles on each further failure
+#define IAM_RETRY_MAX_MS			300000			// upper bound for that wait
 
 // ? Device information
 #define DEVICE_ID_LENGTH			18

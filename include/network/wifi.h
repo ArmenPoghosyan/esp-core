@@ -57,7 +57,6 @@ namespace net {
 
 		bool is_connected() const;
 		bool is_captive() const;
-		bool is_online() const;   // connected AND clock synced (TLS-ready)
 		String ssid() const;
 		String ip() const;
 
@@ -75,7 +74,6 @@ namespace net {
 		void on_joined();
 
 		void set_state(State next);          // also drives the LED
-		void sync_time();
 
 		void fire_connected();               // runs the on_connected callbacks
 		void fire_disconnected();            // runs the on_disconnected callbacks
@@ -97,7 +95,6 @@ namespace net {
 		size_t event_id = 0;                        // WiFi.onEvent() registration, 0 = none
 
 		unsigned long blink_ms = 0;   // current LED blink rate, 0 = not blinking
-		bool time_started = false;    // NTP is started once
 
 		std::vector<std::function<void()>> connected_callbacks;
 		std::vector<std::function<void()>> disconnected_callbacks;

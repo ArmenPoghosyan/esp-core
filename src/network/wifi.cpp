@@ -2,8 +2,6 @@
 
 #include <WiFi.h>
 
-#include <time.h>
-
 #include <algorithm>
 
 #include "device/manager.h"
@@ -163,7 +161,6 @@ namespace net {
 			credentials.set_last_connected(networks[index].ssid);   // writes flash only when it changed
 		}
 
-		sync_time();   // start NTP so TLS cert dates validate
 		fire_connected();
 	}
 
@@ -226,11 +223,6 @@ namespace net {
 		return state == State::CAPTIVE;
 	}
 
-	bool Wifi::is_online() const {
-		// Connected and the clock has been set (past 2021) -> HTTPS can verify certs.
-		return is_connected() && time(nullptr) > 1609459200;
-	}
-
 	String Wifi::ssid() const {
 		return WiFi.SSID();
 	}
@@ -263,15 +255,6 @@ namespace net {
 			const std::function<void()> callback = disconnected_callbacks[i];   // a copy: it may register more
 			callback();
 		}
-	}
-
-	void Wifi::sync_time() {
-		if (time_started) {
-			return;   // SNTP keeps itself updated once started
-		}
-
-		configTime(0, 0, WIFI_NTP_SERVER);   // UTC; SNTP updates the clock in the background
-		time_started = true;
 	}
 
 	void Wifi::set_state(State next) {
